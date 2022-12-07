@@ -1,0 +1,73 @@
+import random
+
+MAZE_WIDTH = 10
+MAZE_HEIGHT = 10
+
+# Represents the state of a cell in the maze
+EMPTY = 0
+WALL = 1
+PLAYER = 2
+END = 3
+
+# Represents a cell in the maze
+class Cell:
+  def __init__(self, state, row, col):
+    self.state = state
+    self.row = row
+    self.col = col
+
+# Represents the maze game
+class MazeGame:
+  def __init__(self):
+    # Initialize the maze with empty cells
+    self.maze = [[Cell(EMPTY, row, col) for col in range(MAZE_WIDTH)] for row in range(MAZE_HEIGHT)]
+
+    # Initialize the player's starting position
+    self.player_row = 0
+    self.player_col = 0
+    self.maze[self.player_row][self.player_col].state = PLAYER
+
+    # Initialize the number of lives and the starting level
+    self.lives = 3
+    self.level = 1
+
+  # Moves the player in the specified direction
+  def move_player(self, drow, dcol):
+    # Check if the move is valid
+    if (self.player_row + drow >= 0 and self.player_row + drow < MAZE_HEIGHT and
+        self.player_col + dcol >= 0 and self.player_col + dcol < MAZE_WIDTH and
+        self.maze[self.player_row + drow][self.player_col + dcol].state != WALL):
+      # Update the player's position
+      self.maze[self.player_row][self.player_col].state = EMPTY
+      self.player_row += drow
+      self.player_col += dcol
+      self.maze[self.player_row][self.player_col].state = PLAYER
+
+      # Check if the player has reached the end
+      if (self.maze[self.player_row][self.player_col].state == END):
+        # Move to the next level
+        self.level += 1
+        self.reset_maze()
+
+    else:
+      # If the move is not valid, the player loses a life
+      self.lives -= 1
+
+  # Resets the maze to the starting state for the current level
+  def reset_maze(self):
+    # Clear the current maze
+    self.maze = [[Cell(EMPTY, row, col) for col in range(MAZE_WIDTH)] for row in range(MAZE_HEIGHT)]
+
+    # Set the player's starting position
+    self.player_row = 0
+    self.player_col = 0
+    self.maze[self.player_row][self.player_col].state = PLAYER
+
+    # Set the end position
+    end_row = MAZE_HEIGHT - 1
+    end_col = MAZE_WIDTH - 1
+    self.maze[end_row][end_col].state = END
+
+    # Set the walls
+    for row in range(MAZE_HEIGHT):
+      for col in range(MAZE
